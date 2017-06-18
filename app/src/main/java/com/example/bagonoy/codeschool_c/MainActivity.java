@@ -77,9 +77,13 @@ public class MainActivity extends AppCompatActivity {
                         // SEnD SOS message here with exception
 
 
-                            smsMgrTwo = SmsManager.getDefault();
-                        smsMgrTwo.sendTextMessage(phonNum, null, msg, null, null);
+                    try {
 
+                        smsMgrTwo = SmsManager.getDefault();
+                        smsMgrTwo.sendTextMessage(phonNum, null, msg, null, null);
+                    }catch ( Exception e){
+                        e.printStackTrace();
+                    }
 
 
 

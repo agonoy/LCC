@@ -184,5 +184,5 @@ public class MainActivity extends AppCompatActivity {
         toast.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
     }
 
-    
+
 }// END OF Mainactivity

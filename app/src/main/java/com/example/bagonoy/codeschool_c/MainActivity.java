@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 
 
 
-
+// testing if committing is actually committing 
 
 
 

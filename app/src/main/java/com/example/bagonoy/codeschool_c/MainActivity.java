@@ -296,4 +296,4 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 
 
 
-}// END OF Mainactivity
+}// END OF MainActivity

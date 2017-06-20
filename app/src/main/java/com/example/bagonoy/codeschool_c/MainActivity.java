@@ -2,13 +2,16 @@ package com.example.bagonoy.codeschool_c;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -23,10 +26,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import static android.Manifest.permission_group.LOCATION;
 
 
-public class MainActivity extends AppCompatActivity implements LocationListener{
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
     TextView textView;
     EditText editTextPhone;
@@ -39,17 +43,37 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
     SmsManager smsMgrTwo = null;  // SMS, used to pass data
     int count = 0;                // SMS, keeps track of message sent button and number putton pused.
 
+    boolean setOnTouchSwitch = true;  // initial state of setOnTouch
 
     LocationManager locationManager;  // GPS
     String mapProvider;               // GPS
+
+    Double longCoor = 0.0;          // GPS -long  use to pass
+    Double lattCoor = 0.0;         // Gps   Lat use to pass
+
+    String dataOfCoordName;        // data of coordinate and name to send via SMS
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+//        Uri uri = Uri.parse("smsto:5556");
+//        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+//        it.putExtra("sms_body", "Here you can set the SMS text to be sent");
+//        it.setType("vnd.android-dir/mms-sms");
+//        startActivity(it);
+
+
+
+
+
+
         // Start coding here.. down below. .
-       // Toast.makeText(MainActivity.this, "Begin of Program", Toast.LENGTH_LONG).show();
+        // Toast.makeText(MainActivity.this, "Begin of Program", Toast.LENGTH_LONG).show();
 //=========================================================================================
         //starT CODE HERE. .
 
@@ -57,18 +81,28 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         chckGPSPermission();
 
 
-        // Makes use of the GPS
+        // Makes use of the GPS.  This will  display LONG and LAT and send it via this awesome
+        // tech called SMS. . . .still working on it
         myLocationSOS();
 
 
-
-
 //============================ DONT DELETE ============================
+        // this button is the medical button
+        final ImageButton btnSOS = (ImageButton) findViewById(R.id.btnSOS);    // button
+        final Button btnSnd = (Button) findViewById(R.id.sndBtn);              // button
+        final Button disable = (Button) findViewById(R.id.dsblButton);       // dslbButton
 
-        ImageButton btnSOS = (ImageButton) findViewById(R.id.btnSOS);    // button
-        Button btnSnd = (Button) findViewById(R.id.sndBtn);              // button
 
-        // This is what will happen after pressing save Botton.  Will save data
+        // Reset when SOS after it has been disabled.
+        disable.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                count = 0;
+            }
+        });
+
+
+        //  Will save data
         btnSnd.setOnClickListener(new OnClickListener() {  // btnSnd
 
             @Override
@@ -90,19 +124,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         });  //nothing in between.
 
 
+//  this is the second call for permission on SMS. . .
+// This one might just be useless. . .  <------- delete in future time.  1 & 2.
         // Part 1 of 2:  check permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
 
 
             Log.d("This App", "Permission is not granted, requesting");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-            button.setEnabled(false);
+            button.setEnabled(true);
         } else {
             Log.d("This App", "Permission is granted");
-            postCenterToast("Permission to send SMS");
+           // postCenterToast("Permission to send SMS");
         }
 
-        // This code is for pressing and holding down the botton.
+
+        // This code is for pressing and holding down the botton, finally sending
         btnSOS.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -110,43 +147,61 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 
                 // count how many text has been sent and after 2 sent. After 2 message sent, no
                 // longer need button.
-                 if (count < MAX_NUMBER__SMS_SENT) {
+                if (count < MAX_NUMBER__SMS_SENT) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         // increaseSize();
                         postCenterToast("***** HOLDING BUTTON ****** .");
 
                     } else {
                         postCenterToast("S.O.S SENT!!!");
+
                         try {
+                            //*****    NOTE:  THIS IS TO SEND SMS, future tech    **************
 
-                            //  NOTE:  THIS IS TO SEND SMS
+                          //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
 
+                                smsMgrTwo = SmsManager.getDefault();
+                         //   }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-		                            smsMgrTwo = SmsManager.getDefault();
-                            }
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
 
-                                smsMgrTwo.sendTextMessage(phonNum, null, msg, null, null);
-                                count++;  // count how many sms sent. . MAX 3
+
+
+                                dataOfCoordName = msg + "HELP!!" + "  " + "http://www.google.com/maps/place/"+lattCoor.toString() + ","+ longCoor.toString();
+
+                                smsMgrTwo.sendTextMessage(phonNum, null, dataOfCoordName, null, null);
+                                count++;  // count how many sms sent. . MAX 1
+                                //    if (count == MAX_NUMBER__SMS_SENT) {
+
+//                                final Handler handler = new Handler();
+//                                handler.postDelayed(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        //Do something after after 3000 seconds
+//                                        //  btnSOS.setEnabled(false);  // disabled button
+//                                    }
+//                                }, 3000);  // 2 seconds
+
+                                postCenterToast("Button Disabled.");
+
+                                //     }
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                       } catch (Exception e) {
+                          e.printStackTrace();
+                      }
                     }
 
                 }// end 1st if statement ---> counting message sent
 
 
-
                 else {
                     postCenterToast("You have already sent TWO MESSAGES.");
                 }
+
+
                 return false;
-            }// end ontouch
+            }// end onTouch
         });
-    } // End OnCreate. .55545
-
-
+    } // End OnCreate...
 
 
 // ==========================  Below are functions ==========================================
@@ -168,8 +223,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 //    }
 
 
-//========== send SMS
-    private void sendSMS(){
+    //========== send SMS   <--------- still working on it
+    private void sendSMS() {
         try {
 
             //  NOTE:  THIS IS TO SEND SMS
@@ -178,7 +233,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
                 smsMgrTwo = SmsManager.getDefault();
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
-
                 smsMgrTwo.sendTextMessage(phonNum, null, msg, null, null);
             }
         } catch (Exception e) {
@@ -187,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
     }
 
 
-//============ Send Message via sms Old Techonolgy
+    //============ Send Message via sms Old Techonolgy
     private void updateData(String address, String message) {
         phonNum = address;
         msg = message;
@@ -203,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         // update message;
     }
 
-//============== custom TOAST message display CENTER left portion of screen
+    //============== custom TOAST message display CENTER left portion of screen
     void postCenterToast(String sayWhat) {
 
         Context context = getApplicationContext();
@@ -218,11 +272,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
     }
 
 
-
 //=============== GPS ============================
 
     //  1 of 2:implement GPS
-    public void myLocationSOS(){
+    public void myLocationSOS() {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -236,6 +289,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
             Location location = locationManager.getLastKnownLocation(mapProvider);
             locationManager.requestLocationUpdates(mapProvider, 15000, 1, this);
 
+
+            //creating location in string to pass
+            longCoor = location.getLongitude();
+            lattCoor = location.getLatitude();
+
+
             if (location != null)
                 onLocationChanged(location);
             else
@@ -243,14 +302,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         }
 
     }
+
     // 2 of 2 implement GPS
     @Override
     public void onLocationChanged(Location location) {
+
+
         TextView longitude = (TextView) findViewById(R.id.longView);
         TextView latitude = (TextView) findViewById(R.id.latView);
 
-        longitude.setText("Current Longitude:" + location.getLongitude());
+        longitude.setText("Current Longitude:\n" + location.getLongitude());
         latitude.setText("Current Latitude:" + location.getLatitude());
+
+        //  String sfd = longitude.toString();  // this ts to convert. .
+
+
+
+
 
         // send location to MSN
 
@@ -272,28 +340,40 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
     }
 
 
-    public void chckGPSPermission(){
+
+    public void sendConCatGPSCoordinate(){  // add parameter if main data is separated or cant find
+    }
+
+
+    public void chckGPSPermission() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            // Allow access to GPS Location
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{ Manifest.permission.ACCESS_FINE_LOCATION,LOCATION}, 0b111);
+            // Allow access to GPS Location, location binary is 0b111,
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, LOCATION}, 0b111);
 
-            Log.d("This App", "Permission is not granted, requesting");
+            Log.d("This App", "Permission is not granted, requesting");  // SMS number is 123.  123 for this High Tech
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-          //  button.setEnabled(false);
+            //  button.setEnabled(false);
         } else {
             Log.d("This App", "Permission is granted");
-            postCenterToast("Permission to send SMS");
+           // postCenterToast("Permission to send SMS");
         }
 
 
     }
 
 
+//    final Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//        @Override
+//        public void run() {
+//            //Do something after after 2000 seconds
+//        }
+//    }, 2000);  // 2 seconds
 
-// testing if committing is actually committing 
 
+// testing if committing is actually committing
 
 
 }// END OF MainActivity

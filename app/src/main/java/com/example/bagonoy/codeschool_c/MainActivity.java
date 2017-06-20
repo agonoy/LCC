@@ -2,16 +2,13 @@ package com.example.bagonoy.codeschool_c;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -51,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     Double longCoor = 0.0;          // GPS -long  use to pass
     Double lattCoor = 0.0;         // Gps   Lat use to pass
 
-    String dataOfCoordName;        // data of coordinate and name to send via SMS
+    String dataOfCoordNameConvertor;        // data of coordinate and name to send via SMS
 
 
     @Override
@@ -166,9 +163,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
 
-                                dataOfCoordName = msg + "HELP!!" + "  " + "http://www.google.com/maps/place/"+lattCoor.toString() + ","+ longCoor.toString();
+                                // adding all coordinates and message to be sent as dataOfCoordNameConvertor
+                               dataOfCoordNameConvertor = msg + " HELP!! " + "  " + "http://www.google.com/maps/place/"+dataOfCoordNameConvertor;
 
-                                smsMgrTwo.sendTextMessage(phonNum, null, dataOfCoordName, null, null);
+                                smsMgrTwo.sendTextMessage(phonNum, null, dataOfCoordNameConvertor, null, null);
                                 count++;  // count how many sms sent. . MAX 1
                                 //    if (count == MAX_NUMBER__SMS_SENT) {
 
@@ -289,6 +287,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Location location = locationManager.getLastKnownLocation(mapProvider);
             locationManager.requestLocationUpdates(mapProvider, 15000, 1, this);
 
+           // convert decimal to string format
+           dataOfCoordNameConvertor = locationStringFromLocation(location);
+
 
             //creating location in string to pass
             longCoor = location.getLongitude();
@@ -374,6 +375,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
 // testing if committing is actually committing
+
+
+
+// Converts to GPS decimal to string format and returns a string
+    public static String locationStringFromLocation(final Location location) {
+        return Location.convert(location.getLatitude(), Location.FORMAT_DEGREES) +
+                "," + Location.convert(location.getLongitude(), Location.FORMAT_DEGREES);
+    }
+
+
+
+
 
 
 }// END OF MainActivity

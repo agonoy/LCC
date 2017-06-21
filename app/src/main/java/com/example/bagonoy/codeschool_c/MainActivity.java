@@ -124,20 +124,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //  this is the second call for permission on SMS. . .
 // This one might just be useless. . .  <------- delete in future time.  1 & 2.
         // Part 1 of 2:  check permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-
-
-            Log.d("This App", "Permission is not granted, requesting");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-
-         //   button.setEnabled(true);  // NOTE: crashes at the beginning. .
-
-
-
-        } else {
-            Log.d("This App", "Permission is granted");
-           // postCenterToast("Permission to send SMS");
-        }
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+//
+//
+//            Log.d("This App", "Permission is not granted, requesting");
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
+//
+//         //   button.setEnabled(true);  // NOTE: crashes at the beginning. .
+//
+//
+//
+//        } else {
+//            Log.d("This App", "Permission is granted");
+//           // postCenterToast("Permission to send SMS");
+//        }
 
 
         // This code is for pressing and holding down the botton, finally sending
@@ -350,24 +350,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
+
     public void chckGPSPermission() {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        //check permission if it is off, then it will prompt user to enable permission.
+        // Checks Location and SMS permission at the same time.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) +
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
 
             // Allow access to GPS Location, location = 0b111,
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, LOCATION}, 0b111);
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS}, 123);
 
-            Log.d("This App", "Permission is not granted, requesting");  // SMS = 123.  123 for this High Tech
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-            button.setEnabled(false);
-        } else {
+//            Log.d("This App", "Permission is not granted, requesting");  // SMS = 123.  123 for this High Tech
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
+//            //  button.setEnabled(false);
+        }
+        else {
             Log.d("This App", "Permission is granted");
            // postCenterToast("Permission to send SMS");
         }
-
-
     }
-
 
 //    final Handler handler = new Handler();
 //                handler.postDelayed(new Runnable() {

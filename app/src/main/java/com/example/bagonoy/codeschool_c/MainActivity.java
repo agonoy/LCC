@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
                                 // adding all coordinates and message to be sent as dataOfCoordNameConvertor
-                               dataOfCoordNameConvertor = msg + " HELP!! " + "  " + "http://www.google.com/maps/place/"+dataOfCoordNameConvertor;
+                               dataOfCoordNameConvertor = msg + "  " + "http://www.google.com/maps/place/"+dataOfCoordNameConvertor;
 
                                 smsMgrTwo.sendTextMessage(phonNum, null, dataOfCoordNameConvertor, null, null);
                                 count++;  // count how many sms sent. . MAX 1
@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             locationManager.requestLocationUpdates(mapProvider, 15000, 1, this);
 
            // convert decimal to string format
-           dataOfCoordNameConvertor = locationStringFromLocation(location);
+           dataOfCoordNameConvertor = locationDecToString(location);
 
 
             //creating location in string to pass
@@ -350,10 +350,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            // Allow access to GPS Location, location binary is 0b111,
+            // Allow access to GPS Location, location = 0b111,
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, LOCATION}, 0b111);
 
-            Log.d("This App", "Permission is not granted, requesting");  // SMS number is 123.  123 for this High Tech
+            Log.d("This App", "Permission is not granted, requesting");  // SMS = 123.  123 for this High Tech
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
             //  button.setEnabled(false);
         } else {
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 
 // Converts to GPS decimal to string format and returns a string
-    public static String locationStringFromLocation(final Location location) {
+    public static String locationDecToString(final Location location) {
         return Location.convert(location.getLatitude(), Location.FORMAT_DEGREES) +
                 "," + Location.convert(location.getLongitude(), Location.FORMAT_DEGREES);
     }

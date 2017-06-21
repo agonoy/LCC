@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
 //        Uri uri = Uri.parse("smsto:5556");
 //        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-//        it.putExtra("sms_body", "Here you can set the SMS text to be sent");
+//        it.putExtra("sms_body", "Here o be sent");
 //        it.setType("vnd.android-dir/mms-sms");
 //        startActivity(it);
 
@@ -129,7 +129,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             Log.d("This App", "Permission is not granted, requesting");
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-            button.setEnabled(true);
+
+         //   button.setEnabled(true);  // NOTE: crashes at the beginning. .
+
+
+
         } else {
             Log.d("This App", "Permission is granted");
            // postCenterToast("Permission to send SMS");
@@ -161,10 +165,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                          //   }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
 
-
+                                // http://maps.google.com/maps?q=24.197611,120.780512 show PIC DROP
 
                                 // adding all coordinates and message to be sent as dataOfCoordNameConvertor
-                               dataOfCoordNameConvertor = msg + "  " + "http://www.google.com/maps/place/"+dataOfCoordNameConvertor;
+                               dataOfCoordNameConvertor = msg + "  " + "http://www.google.com/maps?q="+dataOfCoordNameConvertor;
 
                                 smsMgrTwo.sendTextMessage(phonNum, null, dataOfCoordNameConvertor, null, null);
                                 count++;  // count how many sms sent. . MAX 1
@@ -355,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             Log.d("This App", "Permission is not granted, requesting");  // SMS = 123.  123 for this High Tech
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 123);
-            //  button.setEnabled(false);
+            button.setEnabled(false);
         } else {
             Log.d("This App", "Permission is granted");
            // postCenterToast("Permission to send SMS");

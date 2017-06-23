@@ -1,5 +1,5 @@
 # Community College Coding Challenge
-@authors Vergara, Alfred | Agonoy, Benie | Barcelo, Glen
+@authors Vergara, Alfred | Agonoy, Benie | Barcelo, Glen (ABV Coding)
 ## Watchman App
 
 This application utilizes a button. Upon release of the button, a SMS message is sent to a user defined emergency contact (telephone number) which includes a user defined message and a link to the user's most recent GPS coordinates. This app is intended for use in case of emergency, when the user is feeling unsafe. The user will be able to utilize the simple button press of the application in order to send an SOS to an emergency contact.
@@ -7,6 +7,10 @@ This application utilizes a button. Upon release of the button, a SMS message is
 ### Basis on Security
 
 This application was inspired by the instant response that Batman is able to provide to Gotham by the simple flip of a switch, and the bat signal in the sky. We want to empower our users with a single press of a button, by providing them the ability to quickly contact an emergency contact and let them know where they are experiencing distress. This can also be used with emergency services within certain areas.
+
+### Technical Implementations
+
+The team utilized Google Maps API, SMS and GPS services, simple storage of contacts, interaction of multiple fragments, and a clean GUI utilizing XML. Although the logic and ideas to implement these solutions were simple, the learning curve of both Android Studio and its unique classes felt frustrating and challenging. 
 
 ## Menu Navigation
 (Buttons)
